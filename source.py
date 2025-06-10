@@ -51,9 +51,9 @@ def main():
             user_chat_id = message["chat"]["id"]
 
             if text == "image":
-                send_photo(user_chat_id, "./personal_bot/image.jpg", "📷 Here is your image.")
+                send_photo(user_chat_id, "image.jpg", "📷 Here is your image.")
             elif text == "video":
-                send_video(user_chat_id, "./personal_bot/video.mp4", "🎥 Here is your video.")
+                send_video(user_chat_id, "video.mp4", "🎥 Here is your video.")
             elif text == "text":
                 send_text(user_chat_id, "📝 Here is a text reply.")               
             elif text == "212":
