@@ -2,6 +2,7 @@ from trading212 import Client
 import json # For pretty-printing dictionary output
 import requests
 import time
+import datetime
 
 bot_token = "7922294374:AAFrRbKKP-c88H5GpztN9VR8GxjqYgECT5o"
 base_url = f"https://api.telegram.org/bot{bot_token}"
@@ -39,6 +40,7 @@ YOUR212_API_KEY = '32226549ZXSJTeMFfOPVUkwLBfDcLNsSJPeVW'
 
 def main():
     last_update_id = None
+    DATE = datetime.datetime.now()
     while True:
 
         updates = get_updates(last_update_id)
@@ -67,7 +69,8 @@ def main():
                 print(f"Free Funds: {account_summary['free']} ")
                 print(f"Invested Funds: {account_summary['invested']} ")
                 print("-" * 30 + "\n")
-                send_text(user_chat_id, f"Total: {account_summary['total']} \nFree Funds: {account_summary['free']} \nInvested Funds: {account_summary['invested']}")
+                
+                send_text(user_chat_id, f"Date: {DATE.day}-{DATE.month} \nTotal: {account_summary['total']} \nFree Funds: {account_summary['free']} \nInvested Funds: {account_summary['invested']}")
             else:
                 send_text(user_chat_id, "Send 'image', 'video', or 'text'.")
 
