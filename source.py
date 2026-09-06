@@ -176,7 +176,7 @@ def main():
             user_chat_id = message["chat"]["id"]
 
             # Xử lý theo luồng state hoặc khi gõ 'vn'
-            if user_chat_id in user_states or text == "vn":
+            if user_chat_id in user_states or text == "stock":
                 handle_vn_flow(user_chat_id, raw_text, text)
             elif text == "image":
                 send_photo(user_chat_id, "image.jpg", "📷 Here is your image.")
@@ -186,7 +186,7 @@ def main():
                 send_text(user_chat_id, "📝 Here is a text reply.")
             else:
                 send_text(
-                    user_chat_id, "Send 'image', 'video', 'text' or 'vn'."
+                    user_chat_id, "Send 'image', 'video', 'text' or 'stock'."
                 )
 
         time.sleep(1)
