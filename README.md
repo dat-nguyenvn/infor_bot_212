@@ -1,6 +1,39 @@
 # Personal Bot
 
 A personal automation bot built with Python. The project provides multiple utilities for interacting with Telegram, scanning web content, and generating AI-powered summaries using an LLM.
+## Architecture      
+                    ┌─────────────────┐
+                    │   Web Sources   │
+                    └────────┬────────┘
+                             │
+                             ▼
+                    ┌─────────────────┐
+                    │  scan_web.py    │
+                    │ Web Crawler     │
+                    └────────┬────────┘
+                             │
+                             ▼
+                    ┌─────────────────┐
+                    │ Collected Data  │
+                    └────────┬────────┘
+                             │
+                             ▼
+                    ┌─────────────────┐
+                    │   agent_ai.py   │
+                    │ LLM Processing  │
+                    └────────┬────────┘
+                             │
+                             ▼
+                    ┌─────────────────┐
+                    │ Summary /       │
+                    │ Final Report    │
+                    └────────┬────────┘
+                             │
+                             ▼
+                    ┌─────────────────┐
+                    │   source.py     │
+                    │ Telegram Bot    │
+                    └─────────────────┘
 
 ## Features
 
@@ -17,7 +50,6 @@ The project currently provides three main functions:
 ```text
 personal_bot/
 │
-├── .venv/                  # Python virtual environment
 ├── requirements.txt        # Python dependencies
 │
 ├── source.py              # Telegram bot
@@ -25,20 +57,22 @@ personal_bot/
 ├── agent_ai.py            # LLM-based content summarization
 │
 └── README.md              # Project documentation
-
+```
 ## Installation & Setup
+```
 python3 -m venv .venv
 source .venv/bin/activate
 python3 -m pip install --upgrade pip
 pip3 install -r requirements.txt
 python3 -m playwright install chromium
-
+```
 
 
 ## Fucntion telegram
-python3 source.py
+`python3 source.py`
 
 ## Function scan website
-python3 scan_web.py
+`python3 scan_web.py`
 
-## Function summary con
+## Function summary content using LLM 
+`python3 agent_ai.py`
