@@ -10,7 +10,7 @@ from playwright.async_api import async_playwright
 START_URL = "https://www.torm.com/news/company-announcements/default.aspx"
 OUTPUT_DIR = Path("result")
 OUTPUT_DIR.mkdir(exist_ok=True)
-MAX_ARTICLES = 10
+MAX_ARTICLES = 2
 
 
 def clean_text(text: str) -> str:

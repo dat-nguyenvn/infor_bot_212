@@ -7,7 +7,6 @@ import datetime
 bot_token = "8940816797:AAF7-LWk9eUTUBIZdT0xzgt2QTFtzLNHf0c"
 base_url = f"https://api.telegram.org/bot{bot_token}"
 chat_id = "7506258548"  # Your personal Telegram chat ID
-YOUR212_API_KEY = '32226549ZXSJTeMFfOPVUkwLBfDcLNsSJPeVW'
 api_vnsotck="8940816797:AAF7-LWk9eUTUBIZdT0xzgt2QTFtzLNHf0c"
 def send_text(chat_id, text):
     url = f"{base_url}/sendMessage"
@@ -33,7 +32,39 @@ def get_updates(offset=None):
     params = {"timeout": 100, "offset": offset}
     response = requests.get(url, params=params)
     return response.json()
+# --- NEW FUNCTION TO READ SUMMARY JSON AND FORMAT HYPERLINKS ---
+def get_scan_infor(file_path="announcements_summarized.json") -> str:
+    """Reads the summarized JSON file and formats title, date, summary,
 
+    and a short hyperlinked URL into clean HTML text.
+    """
+    try:
+        with open(file_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except FileNotFoundError:
+        return "⚠️ No summary file found (`announcements_summarized.json`). Please run the scanner first."
+    except Exception as e:
+        return f"⚠️ Error reading summary file: {str(e)}"
+
+    if not data:
+        return "ℹ️ No announcements found in the JSON file."
+
+    messages = []
+    for idx, item in enumerate(data, 1):
+        title = item.get("title", "No Title").strip()
+        date = item.get("date", "Unknown Date").strip()
+        url = item.get("url", "#").strip()
+        summary = item.get("summary_content", "No summary available.").strip()
+
+        formatted_item = (
+            f"<b>{idx}. {title}</b>\n"
+            f"📅 <i>{date}</i>\n\n"
+            f"📝 <b>Summary:</b>\n{summary}\n\n"
+            f'🔗 <a href="{url}">Read Full Announcement</a>'
+        )
+        messages.append(formatted_item)
+
+    return "\n\n───────────────\n\n".join(messages)
 from vnstock import Market, Reference, Fundamental
 from vnstock import register_user
 register_user() # Làm theo hướng dẫn trên terminal
@@ -184,6 +215,10 @@ def main():
                 send_video(user_chat_id, "video.mp4", "🎥 Here is your video.")
             elif text == "text":
                 send_text(user_chat_id, "📝 Here is a text reply.")
+
+            elif text == "scanai":
+                scan_info_text = get_scan_infor("announcements_summarized.json")
+                send_text(user_chat_id, scan_info_text)
             else:
                 send_text(
                     user_chat_id, "Send 'image', 'video', 'text' or 'stock'."

@@ -3,6 +3,7 @@ import torch
 from huggingface_hub import snapshot_download
 from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
 import os
+import json
 # Load a local summarization pipeline
 # Uses Qwen2.5-3B-Instruct (great for local instruction execution & summarization)
 
@@ -121,13 +122,60 @@ In the light of these risks and uncertainties, undue reliance should not be plac
 
 Except to the extent required by applicable law or regulation, the Company undertakes no obligation to release publicly any revisions or updates to these forward-looking statements to reflect events or circumstances after the date of this release or to reflect the occurrence of unanticipated events. Please see TORM’s filings with the U.S. Securities and Exchange Commission for a more complete discussion of certain of these and other risks and uncertainties. The information set forth herein speaks only as of the date hereof, and the Company disclaims any intention or obligation to update any forward-looking statements as a result of developments occurring after the date of this communication.
 """
+def get_contents_from_json(file_path: str) -> list[str]:
+    """
+    Reads a JSON file and extracts all text found under the 'content' key.
+    Returns a list of strings containing the content text.
+    """
+    with open(file_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    
+    # Extract 'content' from each item if the key exists
+    contents = [item["content"] for item in data if "content" in item]
+    return contents
+def add_summaries_and_save(file_path: str, output_path: str, summaries: list[str] | str) -> None:
+    """
+    Reads a JSON file, adds the provided summary text to 'summary_content' key, 
+    and saves the updated data to output_path.
+    
+    :param file_path: Path to input JSON file.
+    :param output_path: Path to save updated JSON file.
+    :param summaries: A list of summary strings (one per item) OR a single summary string.
+    """
+    with open(file_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    # Handle case where a list of summaries is passed
+    if isinstance(summaries, list):
+        for item, summary_text in zip(data, summaries):
+            item["summary_content"] = summary_text
+            
+    # Handle case where a single summary string is passed for all items
+    else:
+        for item in data:
+            item["summary_content"] = summaries
+
+    with open(output_path, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2, ensure_ascii=False)
+
+    print(f"Saved updated file to: {output_path}")
+
 def main():
     path="./models/Qwen2.5-3B-Instruct"
-    if not os.path.exists(path):
-        print("Model path not found. Starting download...")
-        download_qwen()
+    # if not os.path.exists(path):
+    #     print("Model path not found. Starting download...")
+    #     download_qwen()
+
+    contents = get_contents_from_json("result/torm_articles.json")
     summarizer=load_offline_from_weight(model_path="./models/Qwen2.5-3B-Instruct")
-    summary = summarize_text(summarizer,content)
+    summaries_list = [summarize_text(summarizer, text) for text in contents]
+    #summary = summarize_text(summarizer,content)
+    add_summaries_and_save(
+        file_path="announcements.json",
+        output_path="announcements_summarized.json",
+        summaries=summaries_list
+    )
+
     print("Summary:\n", summary)
 
 if __name__ == "__main__":
