@@ -171,8 +171,8 @@ def main():
     summaries_list = [summarize_text(summarizer, text) for text in contents]
     #summary = summarize_text(summarizer,content)
     add_summaries_and_save(
-        file_path="announcements.json",
-        output_path="announcements_summarized.json",
+        file_path="result/torm_articles.json",
+        output_path="result/torm_articles.json",
         summaries=summaries_list
     )
 
